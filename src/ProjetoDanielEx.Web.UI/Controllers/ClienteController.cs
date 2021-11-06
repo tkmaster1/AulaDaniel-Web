@@ -35,9 +35,9 @@ namespace ProjetoDanielEx.Web.UI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //var model = ListarTodos();
-            var response = await _unitOfWork.ClienteApp.ListarTodos();
-            var retorno = _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
+            var retorno = await ListarTodos();
+            //var response = await _unitOfWork.ClienteApp.ListarTodos();
+            //var retorno = _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
 
             return View("Index", retorno);
         }
@@ -46,18 +46,13 @@ namespace ProjetoDanielEx.Web.UI.Controllers
 
         #region Methods  
 
-        public async Task<IActionResult> ListarTodos()
+        public async Task<List<ClienteViewModel>> ListarTodos()
         {
             var response = await _unitOfWork.ClienteApp.ListarTodos();
 
-            // var retorno = _mapper.Map<IEnumerable<ClienteViewModel>>(response?.Data.AsEnumerable());
             var retorno = _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
 
-            return View("Index", retorno);
-
-            // return View(_mapper.Map<IEnumerable<ClienteViewModel>>(response?.Data.ToList() ?? new IEnumerable<ClienteDTO>()));
-
-            // return View(_mapper.Map<IEnumerable<ClienteViewModel>>(response));
+            return retorno; //View("Index", retorno);
 
             //var retorno = _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
 
