@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoDanielEx.Web.UI.Application.DTO;
 using ProjetoDanielEx.Web.UI.Application.Interfaces;
+using ProjetoDanielEx.Web.UI.Application.Request.Cliente;
 using ProjetoDanielEx.Web.UI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,15 +15,12 @@ namespace ProjetoDanielEx.Web.UI.Controllers
     {
         #region Properties
 
-        //  private readonly ILogger<ClienteController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         #endregion
 
         #region Constructor
-
-        //ILogger<ClienteController> logger)
 
         public ClienteController(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -36,10 +35,41 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         public async Task<IActionResult> Index()
         {
             var retorno = await ListarTodos();
-            //var response = await _unitOfWork.ClienteApp.ListarTodos();
-            //var retorno = _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
 
-            return View("Index", retorno);
+            return View(retorno);
+        }
+
+        [HttpGet]
+        public ActionResult Create()
+        {
+            var model = new ClienteViewModel();
+
+            model.ListaTipoPessoa = GetTipoPessoa();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ClienteViewModel cliente)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var clienteDomain = _mapper.Map<ClienteViewModel, RequestAdicionarCliente>(cliente);
+
+                    var response = await _unitOfWork.ClienteApp.Adicionar(clienteDomain);
+
+                    return Json(new { success = true });
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Error = ex;
+                    return PartialView("Create", cliente);
+                }
+            }
+
+            return PartialView(cliente);
         }
 
         #endregion
@@ -50,13 +80,20 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         {
             var response = await _unitOfWork.ClienteApp.ListarTodos();
 
-            var retorno = _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
+            return _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
+        }
 
-            return retorno; //View("Index", retorno);
+        #endregion
 
-            //var retorno = _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
+        #region Métodos Privados
 
-            // return Ok(retorno);
+        private Dictionary<string, string> GetTipoPessoa()
+        {
+            return new Dictionary<string, string>
+            {
+                {"f", "Pessoa Física"},
+                {"j", "Pessoa Jurídica"}
+            };
         }
 
         #endregion

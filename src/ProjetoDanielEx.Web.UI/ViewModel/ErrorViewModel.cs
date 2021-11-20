@@ -1,6 +1,6 @@
 using System;
 
-namespace ProjetoDanielEx.Web.UI.Models
+namespace ProjetoDanielEx.Web.UI.ViewModel
 {
     public class ErrorViewModel
     {

@@ -13,4 +13,8 @@
     <ProjectReference Include="..\ProjetoDanielEx.Web.UI.Application\ProjetoDanielEx.Web.UI.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

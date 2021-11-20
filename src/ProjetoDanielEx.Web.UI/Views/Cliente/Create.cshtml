@@ -1,0 +1,89 @@
+﻿@model ClienteViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Inclusão de Cliente";
+}
+
+@using (Html.BeginForm("Create", "Cliente", FormMethod.Post, new { @id = "form1" }))
+{
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-success">
+                <h5 class="modal-title" id="exampleModalLongTitle">Inclusão de Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <text class="text-danger">@ViewBag.Error</text>
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="row">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Nome, new { @class = "control-label col-md-3" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(model => model.Nome, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Nome, string.Empty, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-7">
+                            @Html.LabelFor(model => model.CPFCNPJFormatado, new { @class = "control-label col-md-6" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(model => model.Documento, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Documento, string.Empty, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            @Html.LabelFor(model => model.TipoPessoa, new { @class = "control-label col-md-8" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model => model.TipoPessoa, new SelectList(Model.ListaTipoPessoa, "Key", "Value"),
+                                                              "- Selecione -", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Documento, string.Empty, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnIncluirCliente">Salvar</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+    <script type="text/javascript">
+
+        $("#btnIncluirCliente").click(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Create", "Cliente")",
+                data:   $('#form1').serialize(),
+                success: function (result) {
+                    debugger;
+                    if (result.success) {
+                        bootbox.alert('Inclusão realizada com sucesso.');
+                        $('#modalCliente').modal('hide');
+                       // window.location = window.location;
+
+                    } else {
+                        $('#modalCliente').html(result);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                    bootbox.alert('O servidor não pôde processar a solicitação');
+                    return false;
+                }
+            });
+        });
+
+    </script>
+}

@@ -28,11 +28,7 @@ namespace ProjetoDanielEx.Web.UI
                 .AddJsonFile("appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true)
                 .AddEnvironmentVariables();
-
-            //if (hostEnvironment.IsDevelopment())
-            //{
-            //    builder.AddUserSecrets<Startup>();
-            //}
+            
             _env = hostEnvironment;
 
             Configuration = builder.Build();

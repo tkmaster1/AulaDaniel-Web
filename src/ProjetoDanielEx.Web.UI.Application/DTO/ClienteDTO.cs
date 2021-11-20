@@ -12,10 +12,10 @@ namespace ProjetoDanielEx.Web.UI.Application.DTO
 
         public string TipoPessoa { get; set; }
 
-        [NotMapped]
+        public string TipoPessoaFormatado { get; set; }
+
         public string DescricaoStatus { get; set; }
 
-        [NotMapped]
         public string CPFCNPJFormatado { get; set; }
     }
 }

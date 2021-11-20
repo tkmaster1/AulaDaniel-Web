@@ -1,11 +1,8 @@
 ﻿using ProjetoDanielEx.Web.UI.Application.BaseService.Interfaces;
 using ProjetoDanielEx.Web.UI.Application.DTO;
 using ProjetoDanielEx.Web.UI.Application.Interfaces;
+using ProjetoDanielEx.Web.UI.Application.Request.Cliente;
 using ProjetoDanielEx.Web.UI.Application.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ProjetoDanielEx.Web.UI.Application.Services
@@ -46,6 +43,17 @@ namespace ProjetoDanielEx.Web.UI.Application.Services
             var request = _service.MontarRequest("GET", url);
 
             var response = await _service.MontarResponse<ClienteDTO>(request);
+
+            return response;
+        }
+
+        public async Task<RetornoAPIData<object>> Adicionar(RequestAdicionarCliente req)
+        {
+            string url = $"{_service.UrlBase}/Cliente/Adicionar/";
+
+            var request = _service.MontarRequest("POST", url, req);
+
+            var response = await _service.MontarResponse<object>(request);
 
             return response;
         }
