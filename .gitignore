@@ -8,16 +8,34 @@
 # wget --no-check-certificate http://gist.githubusercontent.com/kmorcinek/2710267/raw/.gitignore
 
 # User-specific files
+*.rsuser
 *.suo
 *.user
+*.userosscache
 *.sln.docstates
+*.cache
+*.dll
+*.force
+**/*.suo
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
 
 # Build results
 [Dd]ebug/
+[Dd]ebugPublic/
 [Rr]elease/
+[Rr]eleases/
 x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
 [Bb]in/
 [Oo]bj/
+[Ll]og/
+[Ll]ogs/
 # build folder is nowadays used for build scripts and should not be ignored
 #build/
 
@@ -36,11 +54,14 @@ x64/
 
 *_i.c
 *_p.c
+*_h.h
 *.ilk
 *.meta
 *.obj
+*.iobj
 *.pch
 *.pdb
+*.ipdb
 *.pgc
 *.pgd
 *.rsp
@@ -50,17 +71,32 @@ x64/
 *.tlh
 *.tmp
 *.tmp_proj
+*_wpftmp.csproj
 *.log
+*.tlog
 *.vspscc
 *.vssscc
 .builds
 *.pidb
-*.log
+*.svclog
 *.scc
+
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts
 
 # OS generated files #
 .DS_Store*
 Icon?
+
+# Visual Studio 2017 auto generated files
+Generated\ Files/
 
 # Visual C++ cache files
 ipch/
@@ -146,6 +182,7 @@ UpgradeLog*.htm
 
 # vim
 *.txt~
+*.txt
 *.swp
 *.swo
 
@@ -197,6 +234,11 @@ $RECYCLE.BIN/
 
 # Visual Studio temp something
 .vs/
+.vs/**
+**.v16/
+*.dtbcache.v2
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
 
 # dotnet stuff
 project.lock.json
@@ -214,6 +256,7 @@ project.lock.json
 # Output folder used by Webpack or other FE stuff
 **/node_modules/*
 **/wwwroot/*
+**/v16
 
 # SpecFlow specific
 *.feature.cs
