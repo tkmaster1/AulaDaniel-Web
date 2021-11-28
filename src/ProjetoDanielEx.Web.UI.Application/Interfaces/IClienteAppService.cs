@@ -13,8 +13,8 @@ namespace ProjetoDanielEx.Web.UI.Application.Interfaces
 
         Task<RetornoAPIData<object>> Adicionar(RequestAdicionarCliente req);
 
-        //Task<RetornoAPIDataList<ClienteDTO>> ListarTodos();
+        Task<RetornoAPIData<object>> Atualizar(RequestAtualizarCliente requestAtualizar);
 
-        //Task<RetornoAPIDataList<ClienteDTO>> ListarTodos();
+        Task<RetornoAPIData<object>> Deletar(int codigo);
     }
 }

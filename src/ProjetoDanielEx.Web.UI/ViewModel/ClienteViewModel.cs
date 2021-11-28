@@ -30,7 +30,9 @@ namespace ProjetoDanielEx.Web.UI.ViewModel
         [DisplayName("CPF / CNPJ:")]
         public string CPFCNPJFormatado { get; set; }
 
-        [NotMapped]
+      //  [NotMapped]
         public Dictionary<string, string> ListaTipoPessoa { get; set; }
+
+        public string Mensagem { get; set; }
     }
 }

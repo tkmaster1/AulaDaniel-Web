@@ -11,6 +11,7 @@ namespace ProjetoDanielEx.Web.UI.AutoMapper
         {
             CreateMap<ClienteViewModel, ClienteDTO>();
             CreateMap<ClienteViewModel, RequestAdicionarCliente>();
+            CreateMap<ClienteViewModel, RequestAtualizarCliente>();
         }
     }
 }

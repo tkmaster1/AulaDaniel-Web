@@ -32,8 +32,7 @@ namespace ProjetoDanielEx.Web.UI.Application.Services
 
             var request = _service.MontarRequest("GET", url);
 
-            var response = await _service.MontarResponseList<ClienteDTO>(request);
-            return response;
+            return await _service.MontarResponseList<ClienteDTO>(request);
         }
 
         public async Task<RetornoAPIData<ClienteDTO>> ObterPorCodigo(int codigo)
@@ -42,9 +41,7 @@ namespace ProjetoDanielEx.Web.UI.Application.Services
 
             var request = _service.MontarRequest("GET", url);
 
-            var response = await _service.MontarResponse<ClienteDTO>(request);
-
-            return response;
+            return await _service.MontarResponse<ClienteDTO>(request);
         }
 
         public async Task<RetornoAPIData<object>> Adicionar(RequestAdicionarCliente req)
@@ -53,11 +50,26 @@ namespace ProjetoDanielEx.Web.UI.Application.Services
 
             var request = _service.MontarRequest("POST", url, req);
 
-            var response = await _service.MontarResponse<object>(request);
-
-            return response;
+            return await _service.MontarResponse<object>(request);
         }
 
+        public async Task<RetornoAPIData<object>> Atualizar(RequestAtualizarCliente requestAtualizar)
+        {
+            string url = $"{_service.UrlBase}/Cliente/Atualizar/";
+
+            var request = _service.MontarRequest("PUT", url, requestAtualizar);
+
+            return await _service.MontarResponse<object>(request);
+        }
+
+        public async Task<RetornoAPIData<object>> Deletar(int codigo)
+        {
+            string url = $"{_service.UrlBase}/Cliente/Excluir?{codigo}";
+
+            var request = _service.MontarRequest("PUT", url);
+
+            return await _service.MontarResponse<object>(request);
+        }
         #endregion
     }
 }

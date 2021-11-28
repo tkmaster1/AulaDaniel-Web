@@ -103,17 +103,21 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div id="dvCodigo"></div>
             <div class="modal-body" id="modal-body-Cliente">
-
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success delete-confirm">Ok</button>
+                <button class="btn btn-secondary" data-dismiss="modal">Não</button>
+                <button class="btn btn-success delete-confirm">Sim</button>
+                @* <button type="button" class="btn btn-primary" id="btnDeleteConfirm"
+                            onclick="fnExcluirCliente()">
+                        Sim
+                    </button>>*@
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/js/Views/cliente.js"></script>
+    <script src="~/js/Views/cliente.js?timestamp=@DateTime.Now.Ticks.ToString()" asp-append-version="true"></script>
 }

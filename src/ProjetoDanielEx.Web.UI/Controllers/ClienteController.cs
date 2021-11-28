@@ -72,6 +72,65 @@ namespace ProjetoDanielEx.Web.UI.Controllers
             return PartialView(cliente);
         }
 
+        [HttpGet]
+        public async Task<ActionResult> Edit(int id)
+        {
+            var clienteView = await ObterCliente(id);
+            if (clienteView == null) { return NotFound(); }
+
+            return View(clienteView);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ClienteViewModel cliente)
+        {
+            if (!ModelState.IsValid) return View(cliente);
+
+            try
+            {
+                var clienteDomain = _mapper.Map<RequestAtualizarCliente>(cliente);
+                await _unitOfWork.ClienteApp.Atualizar(clienteDomain);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex;
+                return PartialView("Edit", cliente);
+            }
+        }
+
+        //[HttpGet]
+        //public async Task<IActionResult> Delete()
+        //{
+        //    var clienteView = new ClienteViewModel();
+        //    return View(clienteView);
+        //}
+
+        [HttpPost]
+        public IActionResult DeleteConfirmed([FromBody] string objExcluirCliente)
+        {
+            var clienteView = new ClienteViewModel();
+
+            //if (!ModelState.IsValid)
+            //{
+            //    clienteView.Mensagem = "Sem dados de formulário preenchidos!";
+            //    return View(clienteView);
+            //}
+
+            //try
+            //{
+            //    await _unitOfWork.ClienteApp.Deletar(Convert.ToInt32(id));
+            //    return Json(new { success = true });
+            //}
+            //catch (Exception ex)
+            //{
+            //    clienteView.Mensagem = ex.Message;
+            return View("Delete", clienteView);
+            //}
+        }
+
         #endregion
 
         #region Methods  
@@ -94,6 +153,16 @@ namespace ProjetoDanielEx.Web.UI.Controllers
                 {"f", "Pessoa Física"},
                 {"j", "Pessoa Jurídica"}
             };
+        }
+
+        private async Task<ClienteViewModel> ObterCliente(int id)
+        {
+            var response = await _unitOfWork.ClienteApp.ObterPorCodigo(id);
+
+            var clienteView = _mapper.Map<ClienteDTO, ClienteViewModel>(response?.Data ?? new ClienteDTO());
+            clienteView.ListaTipoPessoa = GetTipoPessoa();
+
+            return clienteView;
         }
 
         #endregion
