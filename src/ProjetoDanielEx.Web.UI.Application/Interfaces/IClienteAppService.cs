@@ -15,6 +15,6 @@ namespace ProjetoDanielEx.Web.UI.Application.Interfaces
 
         Task<RetornoAPIData<object>> Atualizar(RequestAtualizarCliente requestAtualizar);
 
-        Task<RetornoAPIData<object>> Deletar(int codigo);
+        Task<RetornoAPIData<object>> Deletar(RequestExcluirCliente req);
     }
 }

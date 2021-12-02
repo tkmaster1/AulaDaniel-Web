@@ -62,14 +62,15 @@ namespace ProjetoDanielEx.Web.UI.Application.Services
             return await _service.MontarResponse<object>(request);
         }
 
-        public async Task<RetornoAPIData<object>> Deletar(int codigo)
+        public async Task<RetornoAPIData<object>> Deletar(RequestExcluirCliente req)
         {
-            string url = $"{_service.UrlBase}/Cliente/Excluir?{codigo}";
+            string url = $"{_service.UrlBase}/Cliente/Excluir/";
 
-            var request = _service.MontarRequest("PUT", url);
+            var request = _service.MontarRequest("PUT", url, req);
 
             return await _service.MontarResponse<object>(request);
         }
+
         #endregion
     }
 }

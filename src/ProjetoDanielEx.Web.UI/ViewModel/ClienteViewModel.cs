@@ -15,7 +15,7 @@ namespace ProjetoDanielEx.Web.UI.ViewModel
         public string Nome { get; set; }
 
         [Required(ErrorMessage = "* O campo {0} é obrigatório")]
-        [StringLength(14, ErrorMessage = "O campo {0} precisa ter {1} caracteres", MinimumLength = 11)]
+        [StringLength(18, ErrorMessage = "O campo {0} precisa ter {1} caracteres", MinimumLength = 11)]
         public string Documento { get; set; }
 
         [DisplayName("Tipo Pessoa:")]
@@ -30,7 +30,6 @@ namespace ProjetoDanielEx.Web.UI.ViewModel
         [DisplayName("CPF / CNPJ:")]
         public string CPFCNPJFormatado { get; set; }
 
-      //  [NotMapped]
         public Dictionary<string, string> ListaTipoPessoa { get; set; }
 
         public string Mensagem { get; set; }

@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProjetoDanielEx.Web.UI.Application.DTO;
 using ProjetoDanielEx.Web.UI.Application.Interfaces;
 using ProjetoDanielEx.Web.UI.Application.Request.Cliente;
+using ProjetoDanielEx.Web.UI.Util;
 using ProjetoDanielEx.Web.UI.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,9 +42,10 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            var model = new ClienteViewModel();
-
-            model.ListaTipoPessoa = GetTipoPessoa();
+            var model = new ClienteViewModel
+            {
+                ListaTipoPessoa = GetTipoPessoa()
+            };
             return View(model);
         }
 
@@ -52,24 +53,17 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ClienteViewModel cliente)
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var clienteDomain = _mapper.Map<ClienteViewModel, RequestAdicionarCliente>(cliente);
+            string mensagem = string.Empty;
 
-                    var response = await _unitOfWork.ClienteApp.Adicionar(clienteDomain);
+            var clienteDomain = _mapper.Map<ClienteViewModel, RequestAdicionarCliente>(cliente);
+            var response = await _unitOfWork.ClienteApp.Adicionar(clienteDomain);
 
-                    return Json(new { success = true });
-                }
-                catch (Exception ex)
-                {
-                    ViewBag.Error = ex;
-                    return PartialView("Create", cliente);
-                }
-            }
+            if (response.Data.ToString().Length <= 0)
+                mensagem = Mensagens.MSG_FALHA.ToFormat("Incluir", "o Cliente");
+            else
+                mensagem = Mensagens.MSG_SUCESSO.ToFormat("realizada", "Inclusão");
 
-            return PartialView(cliente);
+            return Json(new { success = true, mensagem = mensagem });
         }
 
         [HttpGet]
@@ -85,50 +79,35 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ClienteViewModel cliente)
         {
-            if (!ModelState.IsValid) return View(cliente);
+            string mensagem = string.Empty;
 
-            try
-            {
-                var clienteDomain = _mapper.Map<RequestAtualizarCliente>(cliente);
-                await _unitOfWork.ClienteApp.Atualizar(clienteDomain);
+            var clienteDomain = _mapper.Map<RequestAtualizarCliente>(cliente);
+            var response = await _unitOfWork.ClienteApp.Atualizar(clienteDomain);
 
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex;
-                return PartialView("Edit", cliente);
-            }
+            if (!(bool)response.Data)
+                mensagem = Mensagens.MSG_FALHA.ToFormat("Editar", "o Cliente");
+            else
+                mensagem = Mensagens.MSG_SUCESSO.ToFormat("realizada", "Edição");
+
+            return Json(new { success = true, mensagem = mensagem });
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Delete()
-        //{
-        //    var clienteView = new ClienteViewModel();
-        //    return View(clienteView);
-        //}
-
-        [HttpPost]
-        public IActionResult DeleteConfirmed([FromBody] string objExcluirCliente)
+        [HttpGet]
+        public async Task<IActionResult> Delete(int codigo)
         {
-            var clienteView = new ClienteViewModel();
+            string mensagem = string.Empty;
 
-            //if (!ModelState.IsValid)
-            //{
-            //    clienteView.Mensagem = "Sem dados de formulário preenchidos!";
-            //    return View(clienteView);
-            //}
+            var response = await _unitOfWork.ClienteApp.Deletar(new RequestExcluirCliente()
+            {
+                Codigo = codigo
+            });
 
-            //try
-            //{
-            //    await _unitOfWork.ClienteApp.Deletar(Convert.ToInt32(id));
-            //    return Json(new { success = true });
-            //}
-            //catch (Exception ex)
-            //{
-            //    clienteView.Mensagem = ex.Message;
-            return View("Delete", clienteView);
-            //}
+            if (!(bool)response.Data)
+                mensagem = Mensagens.MSG_FALHA.ToFormat("excluir", "o Cliente");
+            else
+                mensagem = Mensagens.MSG_SUCESSO.ToFormat("excluído", "Cliente");
+
+            return Json(new { success = true, mensagem = mensagem });
         }
 
         #endregion
@@ -138,7 +117,6 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         public async Task<List<ClienteViewModel>> ListarTodos()
         {
             var response = await _unitOfWork.ClienteApp.ListarTodos();
-
             return _mapper.Map<List<ClienteViewModel>>(response?.Data.ToList() ?? new List<ClienteDTO>());
         }
 
@@ -158,10 +136,8 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         private async Task<ClienteViewModel> ObterCliente(int id)
         {
             var response = await _unitOfWork.ClienteApp.ObterPorCodigo(id);
-
             var clienteView = _mapper.Map<ClienteDTO, ClienteViewModel>(response?.Data ?? new ClienteDTO());
             clienteView.ListaTipoPessoa = GetTipoPessoa();
-
             return clienteView;
         }
 

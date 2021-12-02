@@ -1,14 +1,22 @@
 ﻿/* Arquivo .js que contém todas funções necessárias para a página de Cliente */
 
-$(document).ready(function myfunction() {
-
-    // $('#TipoPessoa').select2();
+$(document).ready(function () {
 
     $('#dtCliente').DataTable({
+               columnDefs: [{ orderable: false, targets: 4 }],        
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/1.10.20/i18n/Portuguese-Brasil.json",
-            "infoEmpty": "No entries to show"
-        }
+            "infoEmpty": "No entries to show",
+            "sInfo": "Mostrando de _START_ ate _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sInfoThousands": ".",
+            "sLengthMenu": "_MENU_ resultados por página",
+            "sLoadingRecords": "Carregando...",
+            "sProcessing": "Processando...",
+            "sPaginationType": "full_numbers",
+        }        
     });
 
     $('#btnCreateCliente').on('click', function () {
@@ -30,12 +38,7 @@ $(document).ready(function myfunction() {
             $("#modalCliente").modal('show');
         });
     });
-
-    //$("input[id*='Documento']").inputmask({
-    //    mask: ['999.999.999-99', '99.999.999/9999-99'],
-    //    keepStatic: true
-    //});
-
+   
     $(document).on('click', '.btnDeleteCliente', function (e) {
         e.preventDefault();
         id = $(this).data('id');
@@ -48,78 +51,29 @@ $(document).ready(function myfunction() {
         $("#modal-body-Cliente").html(msg);
         $("#modalDeleteCliente").modal('show');
 
-        //$('#modalDeleteCliente').on('click', '.delete-confirm', function (e) {
-        //    //Ajax Function to send a get request
-        //    $.ajax({
-        //        type: "POST",
-        //        url: '/Cliente/DeleteConfirmed',
-        //        dataType: 'json',
-        //        data: JSON.stringify({ objExcluirCliente: id }),
-        //        processData: false,
-        //        contentType: "application/json; charset=utf-8",
-        //        cache: false,
-        //        async: false,
-        //        success: function () {
-        //            debugger;
-        //            $("#modalDeleteCliente").modal('hide');
-        //            bootbox.alert("Cliente excluídO com sucesso!");
-        //        },
-        //        error: function (er) {
-        //            bootbox.alert(er);
-        //        }
-        //    });
-        //});
+        $('#modalDeleteCliente').on('click', '.delete-confirm', function (e) {
+            e.preventDefault();
 
+            $.ajax({
+                type: "GET",
+                url: '/Cliente/Delete',
+                data: { codigo: id },
+                success: function (result) {
+                    if (result.success) {
+                        $("#modalDeleteCliente").modal("hide");
+                        bootbox.alert(result.mensagem);
+                    } else {
+                        $('#modalDeleteCliente').html(result.mensagem);
+                    }
+                },
+                error: function (er) {
+                    bootbox.alert(er);
+                }
+            });
+        });
     });
 
 });
-
-function fnExcluirCliente() {
-
-    debugger;
-
-    var codigo = $("#hdCodigoCliente").val();
-    var objExcluirCliente = {
-        "Codigo": codigo
-    }
-
-    var formData = new FormData();
-    formData.append('objExcluirCliente', JSON.stringify(objExcluirCliente));
-
-   // console.log(formData);
-    var url = "/Cliente/DeleteConfirmed";
-
-    $.ajax({
-        type: 'POST',
-        url: url,
-        data: { country: "2", amount: "4.02" },
-        dataType: "json",
-        contentType: "application/json",
-        traditional: true,
-        success: function (data) {
-            alert("hiiii" + data);
-        }
-    });
-
-    //$.ajax({
-    //    type: "POST",
-    //    url: url,
-    //    dataType: 'json',
-    //    data: formData,
-    //    processData: false,
-    //    contentType: false,
-    //    success: function () {
-    //        debugger;
-    //        $("#modalDeleteCliente").modal('hide');
-    //        bootbox.alert("Cliente excluído com sucesso!");
-    //    },
-    //    error: function (er) {
-    //        debugger;
-    //        console.log(er);
-    //        bootbox.alert(er);
-    //    }
-    //});
-}
 
 function loadData() {
     //Ajax Function to send a get request

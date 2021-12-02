@@ -93,6 +93,25 @@
 <div class="modal fade" id="modalCliente" tabindex="-1" role="dialog" aria-labelledby="modalClienteTitle" aria-hidden="true">
 </div>
 
+<!-- Modal Retorno -->
+<div class="modal fade" id="modalRetorno" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header alert alert-warning">
+                <h5 class="modal-title" id="tituloModalRetorno">Sucesso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mensagemRetorno">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="ModalClose()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap modal popup -->
 <div class="modal fade" id="modalDeleteCliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -109,15 +128,12 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-dismiss="modal">Não</button>
                 <button class="btn btn-success delete-confirm">Sim</button>
-                @* <button type="button" class="btn btn-primary" id="btnDeleteConfirm"
-                            onclick="fnExcluirCliente()">
-                        Sim
-                    </button>>*@
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/Views/cliente.js?timestamp=@DateTime.Now.Ticks.ToString()" asp-append-version="true"></script>
 }

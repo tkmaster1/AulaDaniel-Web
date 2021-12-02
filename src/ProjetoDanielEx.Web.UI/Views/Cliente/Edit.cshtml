@@ -5,45 +5,50 @@
     ViewBag.Title = "Edição de Cliente";
 }
 
-@using (Html.BeginForm("Edit", "Cliente", FormMethod.Post, new { @id = "form1" }))
-{
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header alert alert-primary">
-                <h5 class="modal-title" id="exampleModalLongTitle">Edição de Cliente</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+<script>
+    $("input[id*='Documento']").inputmask({
+        mask: ['999.999.999-99', '99.999.999/9999-99'],
+        keepStatic: true
+    });
+</script>
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header alert alert-primary">
+            <h5 class="modal-title" id="exampleModalLongTitle">Edição de Cliente</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form asp-action="Edit" asp-controller="Cliente" id="form1">
             @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Codigo" />
             <div class="modal-body">
-                <text class="text-danger">@ViewBag.Error</text>
                 <div class="form-horizontal">
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <input type="hidden" asp-for="Codigo" />
                     <div class="row">
                         <div class="col-12">
                             <label asp-for="Nome"></label>
                             <div class="col-md-12">
                                 <input asp-for="Nome" class="form-control" />
-                                <span asp-validation-for="Nome" class="text-danger"></span>                               
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
+                        <br />
                     </div>
                     <div class="row">
                         <div class="col-7">
                             <label asp-for="CPFCNPJFormatado"></label>
                             <div class="col-md-12">
                                 <input asp-for="Documento" class="form-control" />
-                                <span asp-validation-for="Documento" class="text-danger"></span>                                
                             </div>
                         </div>
                         <div class="col-5">
                             <label asp-for="TipoPessoa"></label>
                             <div class="col-md-12">
-                                @Html.DropDownListFor(model => model.TipoPessoa, new SelectList(Model.ListaTipoPessoa, "Key", "Value"),
-                                                              "- Selecione -", new { @class = "form-control" })
-                                <span asp-validation-for="TipoPessoa" class="text-danger"></span>
+                                <select asp-for="TipoPessoa" asp-items="@(new SelectList(Model.ListaTipoPessoa, "Key", "Value"))" class="form-control">
+                                    <option value="">- Selecione -</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -53,34 +58,66 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-success" id="btnSalvarCliente">Salvar</button>
             </div>
+        </form>
 
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
 
-    <script type="text/javascript">
-      //  $('#TipoPessoa').select2();
-      ////  $('#Documento').inp
-      //  $("input[id*='Documento']").inputmask({
-      //      mask: ['999.999.999-99', '99.999.999/9999-99'],
-      //      keepStatic: true
-      //  });
+<script type="text/javascript">
 
-        $("#btnSalvarCliente").click(function (e) {
-            e.preventDefault();
+    function fnValidarCliente() {
 
+        if (($('#TipoPessoa option:selected').val() == "0" ||
+            $('#TipoPessoa option:selected').val() == "" ||
+            $('#TipoPessoa option:selected').val() == null) && ($('#Nome').val() == "") && ($('#Documento').val() == "")) {
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "O campo CPF/CNPJ é obrigatório!", "O campo Nome é obrigatório!");
+            return false;
+        }
+
+        if (($('#TipoPessoa option:selected').val() == "0" ||
+            $('#TipoPessoa option:selected').val() == "" ||
+            $('#TipoPessoa option:selected').val() == null)) {
+
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "", "");
+            return false;
+        }
+
+        if ($('#Nome').val() == "") {
+            mensagensErros("", "", "O campo Nome é obrigatório!");
+            return false;
+        }
+
+        if ($('#Documento').val() == "") {
+            mensagensErros("", "O campo CPF/CNPJ é obrigatório!", "");
+            return false;
+        }
+
+        if (($('#TipoPessoa option:selected').val() == "f" && $('#Documento').val().length > 14) ||
+            ($('#TipoPessoa option:selected').val() == "j" && $('#Documento').val().length < 18)) {
+
+            mensagensErros("O Campo CPF/CNPJ não corresponde com o Tipo Pessoa", "", "");
+            return false;
+        }
+
+        return true;
+    }
+
+    $("#btnSalvarCliente").click(function (e) {
+        e.preventDefault();
+
+        if (fnValidarCliente()) {
             $.ajax({
                 type: "POST",
                 url: "@Url.Action("Edit", "Cliente")",
-                data:   $('#form1').serialize(),
+                data: $('#form1').serialize(),
                 success: function (result) {
-                    debugger;
                     if (result.success) {
-                        bootbox.alert('Edição realizada com sucesso.');
                         $('#modalCliente').modal('hide');
-                       // window.location = window.location;
+                        bootbox.alert(result.mensagem);
+                        // window.location = window.location;
 
                     } else {
-                        $('#modalCliente').html(result);
+                        $('#modalCliente').html(result.mensagem);
                     }
                 },
                 error: function (errormessage) {
@@ -89,7 +126,31 @@
                     return false;
                 }
             });
-        });
+        }
+    });
 
-    </script>
-}
+    // modal Mensagens
+    function mensagensErros(validTipoPessoa, validDocumento, validNome) {
+        $('.img-loader').css("display", "none");
+        $('.mensagemRetorno').empty();
+        $('#tituloModalRetorno').text("Alerta: Edição de Cliente");
+        $('.mensagemRetorno').append('<p>Foram encontrados os seguintes erros ao salvar:</p>');
+        $('.mensagemRetorno').append('<ul id="listaErros"></ul>');
+
+        if (validTipoPessoa !== "") {
+            $('#listaErros').append('<li>' + validTipoPessoa + '</li>');
+        }
+
+        if (validDocumento !== "") {
+            $('#listaErros').append('<li>' + validDocumento + '</li>');
+        }
+
+        if (validNome !== "") {
+            $('#listaErros').append('<li>' + validNome + '</li>');
+        }
+
+        $("#modalRetorno").modal({ backdrop: 'static', keyboard: false });
+        $("#btnSalvarModalNovo").removeAttr("disabled");
+        $("#btnCancelarModalNovo").removeAttr("disabled");
+    }
+</script>
