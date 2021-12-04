@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ProjetoDanielEx.Web.UI.Application.DTO;
+using ProjetoDanielEx.Web.UI.Application.Request.Cliente;
 using ProjetoDanielEx.Web.UI.ViewModel;
 
 namespace ProjetoDanielEx.Web.UI.AutoMapper
@@ -9,6 +10,8 @@ namespace ProjetoDanielEx.Web.UI.AutoMapper
         public DomainToViewModelMappingProfile()
         {
             CreateMap<ClienteDTO, ClienteViewModel>();
+            CreateMap<RequestAdicionarCliente, ClienteViewModel>();
+            CreateMap<RequestAtualizarCliente, ClienteViewModel>();
         }
     }
 }

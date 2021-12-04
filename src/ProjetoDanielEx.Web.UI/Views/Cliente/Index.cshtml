@@ -1,52 +1,139 @@
-﻿@model List<ProjetoDanielEx.Web.UI.ViewModel.ClienteViewModel>
+﻿@model IEnumerable<ClienteViewModel>
+
 @{
-    ViewData["Title"] = "Index";
-
+    ViewData["Title"] = "Cliente";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Teste cliente - </p>
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Cliente</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="breadcrumb-item">Cadastro</li>
+                    <li class="breadcrumb-item active">Cliente</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- DataTables Example -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-fw fa-bars"></i>
+                Lista
+                <button class="btn btn-secondary btn-sm float-right"
+                        id="btnRefreshCliente">
+                    <i class="fa fa-fw fa-sync-alt" data-toggle="tooltip" title="Atualizar"></i>
+                </button>
+                <button class="btn btn-success btn-sm float-right"
+                        id="btnCreateCliente" style="color:white">
+                    <i class="fa fa-fw fa-plus" data-toggle="tooltip" title="Incluir"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered" id="dtCliente" style="width:100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Nome)
+                                </th>
+                                <th style="width:150px; text-align-last:center;">
+                                    @Html.DisplayNameFor(model => model.CPFCNPJFormatado)
+                                </th>
+                                <th style="width:150px; text-align-last:center;">
+                                    @Html.DisplayNameFor(model => model.TipoPessoa)
+                                </th>
+                                <th style="width:150px; text-align-last:center;">
+                                    @Html.DisplayNameFor(model => model.DescricaoStatus)
+                                </th>
+                                <th style="width:100px; text-align-last:center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ToList())
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Nome)
+                                    </td>
+                                    <td style="width:150px; text-align-last:center;">
+                                        @Html.DisplayFor(modelItem => item.CPFCNPJFormatado)
+                                    </td>
+                                    <td style="width:150px; text-align-last:center;">
+                                        @Html.DisplayFor(modelItem => item.TipoPessoaFormatado)
+                                    </td>
+                                    <td style="width:150px; text-align-last:center;">
+                                        @Html.DisplayFor(modelItem => item.DescricaoStatus)
+                                    </td>
+                                    <td style="width:100px; text-align-last:center;">
+                                        <button type="button" class="btn btn-primary btn-sm btnEditarCliente" id="btnEditarCliente" data-id="@item.Codigo" data-toggle="modal"><i class="fa fa-edit" data-toggle="tooltip" title="Editar"></i></button>
+                                        <button type="button" class="btn btn-danger btn-sm btnDeleteCliente" data-id="@item.Codigo" data-nome="@item.Nome" data-toggle="modal"><i class="fa fa-trash" data-toggle="tooltip" title="Excluir"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-<table class="table table-hover">
-    <thead class="thead-dark">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().CPFCNPJFormatado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().TipoPessoa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().DescricaoStatus)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.ToList())
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CPFCNPJFormatado)
-                </td>
-                <th>
-                    @Html.DisplayFor(modelItem => item.TipoPessoa)
-                </th>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DescricaoStatus)
-                </td>
-                <td class="text-right">
-                    <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Codigo"><spam class="fa fa-search"></spam></a>
-                    @*<a class="btn btn-warning" supress-by-claim-name="Fornecedor" supress-by-claim-value="Editar" asp-action="Edit" asp-route-id="@item.Codigo"><spam class="fa fa-pencil-alt"></spam></a>
-                        <a class="btn btn-danger" supress-by-claim-name="Fornecedor" supress-by-claim-value="Excluir" asp-action="Delete" asp-route-id="@item.Codigo"><spam class="fa fa-trash"></spam></a>*@
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Modal -->
+<div class="modal fade" id="modalCliente" tabindex="-1" role="dialog" aria-labelledby="modalClienteTitle" aria-hidden="true">
+</div>
+
+<!-- Modal Retorno -->
+<div class="modal fade" id="modalRetorno" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header alert alert-warning">
+                <h5 class="modal-title" id="tituloModalRetorno">Sucesso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mensagemRetorno">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="ModalClose()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap modal popup -->
+<div class="modal fade" id="modalDeleteCliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-danger">
+                <h4 class="modal-title" id="myModalLabel">Exclusão de Cliente</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="dvCodigo"></div>
+            <div class="modal-body" id="modal-body-Cliente">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Não</button>
+                <button class="btn btn-success delete-confirm">Sim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/Views/cliente.js?timestamp=@DateTime.Now.Ticks.ToString()" asp-append-version="true"></script>
+}

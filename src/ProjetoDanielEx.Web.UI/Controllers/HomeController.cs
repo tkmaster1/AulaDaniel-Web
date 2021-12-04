@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjetoDanielEx.Web.UI.Models;
-using System;
-using System.Collections.Generic;
+using ProjetoDanielEx.Web.UI.ViewModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjetoDanielEx.Web.UI.Controllers
 {

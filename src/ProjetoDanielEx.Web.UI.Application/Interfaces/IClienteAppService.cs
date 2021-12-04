@@ -1,4 +1,5 @@
 ﻿using ProjetoDanielEx.Web.UI.Application.DTO;
+using ProjetoDanielEx.Web.UI.Application.Request.Cliente;
 using ProjetoDanielEx.Web.UI.Application.Response;
 using System.Threading.Tasks;
 
@@ -10,10 +11,10 @@ namespace ProjetoDanielEx.Web.UI.Application.Interfaces
 
         Task<RetornoAPIData<ClienteDTO>> ObterPorCodigo(int codigo);
 
-        //Task<RetornoAPIDataList<ClienteDTO>> ListarTodos();
+        Task<RetornoAPIData<object>> Adicionar(RequestAdicionarCliente req);
 
-        //Task<RetornoAPIDataList<ClienteDTO>> ListarTodos();
+        Task<RetornoAPIData<object>> Atualizar(RequestAtualizarCliente requestAtualizar);
 
-        //Task<RetornoAPIDataList<ClienteDTO>> ListarTodos();
+        Task<RetornoAPIData<object>> Deletar(RequestExcluirCliente req);
     }
 }

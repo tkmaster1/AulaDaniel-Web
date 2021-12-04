@@ -1,0 +1,160 @@
+﻿@model ClienteViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Inclusão de Cliente";
+}
+
+<script>
+    $("input[id*='Documento']").inputmask({
+        mask: ['999.999.999-99', '99.999.999/9999-99'],
+        keepStatic: true
+    });
+
+</script>
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header alert alert-success">
+            <h5 class="modal-title" id="exampleModalLongTitle">Inclusão de Cliente</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form asp-action="Create" asp-controller="Cliente" id="form1">
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="row">
+                        <div class="col-12">
+                            <label asp-for="Nome"></label>
+                            <div class="col-md-12">
+                                <input asp-for="Nome" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <br />
+                    </div>
+                    <div class="row">
+                        <div class="col-7">
+                            <label asp-for="CPFCNPJFormatado"></label>
+                            <div class="col-md-12">
+                                <input asp-for="Documento" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <label asp-for="TipoPessoa"></label>
+                            <div class="col-md-12">
+                                @*@Html.DropDownListFor(model => model.TipoPessoa, new SelectList(Model.ListaTipoPessoa, "Key", "Value"),
+                                    "- Selecione -", new { @class = "form-control" })*@
+                                <select asp-for="TipoPessoa" asp-items="@(new SelectList(Model.ListaTipoPessoa, "Key", "Value"))" class="form-control">
+                                    <option value="">- Selecione -</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnIncluirCliente">Salvar</button>
+            </div>
+        </form>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<script type="text/javascript">
+
+    function fnValidarCliente() {
+
+        if (($('#TipoPessoa option:selected').val() == "0" ||
+            $('#TipoPessoa option:selected').val() == "" ||
+            $('#TipoPessoa option:selected').val() == null) &&
+            ($('#Nome').val() == "") &&
+            ($('#Documento').val() == "")) {
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "O campo CPF/CNPJ é obrigatório!", "O campo Nome é obrigatório!");
+            return false;
+        }
+
+        if (($('#TipoPessoa option:selected').val() == "0" ||
+            $('#TipoPessoa option:selected').val() == "" ||
+            $('#TipoPessoa option:selected').val() == null)) {
+
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "", "");
+            return false;
+        }
+
+        if ($('#Nome').val() == "") {
+            mensagensErros("", "", "O campo Nome é obrigatório!");
+            return false;
+        }
+
+        if ($('#Documento').val() == "") {
+            mensagensErros("", "O campo CPF/CNPJ é obrigatório!", "");
+            return false;
+        }
+
+        if (($('#TipoPessoa option:selected').val() == "f" && $('#Documento').val().length > 14) ||
+            ($('#TipoPessoa option:selected').val() == "j" && $('#Documento').val().length < 18)) {
+
+            mensagensErros("O Campo CPF/CNPJ não corresponde com o Tipo Pessoa", "", "");
+            return false;
+        }
+
+        return true;
+    }
+
+    $("#btnIncluirCliente").click(function (e) {
+        e.preventDefault();
+
+        if (fnValidarCliente()) {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Create", "Cliente")",
+                data: $('#form1').serialize(),
+                success: function (result) {
+                    //  debugger;
+                    if (result.success) {
+                        $('#modalCliente').modal('hide');
+                        bootbox.alert(result.mensagem);
+
+                    } else {
+                        $('#modalCliente').html(result.mensagem);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                    bootbox.alert('O servidor não pôde processar a solicitação');
+                    return false;
+                }
+            });
+        }
+    });
+
+    // modal Mensagens
+    function mensagensErros(validTipoPessoa, validDocumento, validNome) {
+        $('.img-loader').css("display", "none");
+        $('.mensagemRetorno').empty();
+        $('#tituloModalRetorno').text("Alerta: Cadastro de Cliente");
+        $('.mensagemRetorno').append('<p>Foram encontrados os seguintes erros ao salvar:</p>');
+        $('.mensagemRetorno').append('<ul id="listaErros"></ul>');
+
+        if (validTipoPessoa !== "") {
+            $('#listaErros').append('<li>' + validTipoPessoa + '</li>');
+        }
+
+        if (validDocumento !== "") {
+            $('#listaErros').append('<li>' + validDocumento + '</li>');
+        }
+
+        if (validNome !== "") {
+            $('#listaErros').append('<li>' + validNome + '</li>');
+        }
+
+        $("#modalRetorno").modal({ backdrop: 'static', keyboard: false });
+        $("#btnSalvarModalNovo").removeAttr("disabled");
+        $("#btnCancelarModalNovo").removeAttr("disabled");
+    }
+</script>
+@*}*@
