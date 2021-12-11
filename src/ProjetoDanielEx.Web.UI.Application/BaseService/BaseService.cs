@@ -6,7 +6,6 @@ using ProjetoDanielEx.Web.UI.Application.BaseService.Interfaces;
 using ProjetoDanielEx.Web.UI.Application.Response;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;

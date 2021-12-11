@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ClienteViewModel>
+﻿@using ProjetoDanielEx.Web.UI.Util
+@model IEnumerable<ClienteViewModel>
 
 @{
     ViewData["Title"] = "Cliente";
@@ -32,7 +33,7 @@
                 Lista
                 <button class="btn btn-secondary btn-sm float-right"
                         id="btnRefreshCliente">
-                    <i class="fa fa-fw fa-sync-alt" data-toggle="tooltip" title="Atualizar"></i>
+                    <i class="fa fa-fw fa-refresh" data-toggle="tooltip" title="Atualizar"></i>
                 </button>
                 <button class="btn btn-success btn-sm float-right"
                         id="btnCreateCliente" style="color:white">
@@ -45,16 +46,16 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Nome)
+                                    Nome
                                 </th>
                                 <th style="width:150px; text-align-last:center;">
-                                    @Html.DisplayNameFor(model => model.CPFCNPJFormatado)
+                                    CPF / CNPJ
                                 </th>
                                 <th style="width:150px; text-align-last:center;">
-                                    @Html.DisplayNameFor(model => model.TipoPessoa)
+                                    Tipo Pessoa
                                 </th>
                                 <th style="width:150px; text-align-last:center;">
-                                    @Html.DisplayNameFor(model => model.DescricaoStatus)
+                                    Status
                                 </th>
                                 <th style="width:100px; text-align-last:center;">Ações</th>
                             </tr>
@@ -67,17 +68,26 @@
                                         @Html.DisplayFor(modelItem => item.Nome)
                                     </td>
                                     <td style="width:150px; text-align-last:center;">
-                                        @Html.DisplayFor(modelItem => item.CPFCNPJFormatado)
+                                        @this.FormataDocumento(item.TipoPessoa, item.Documento)
                                     </td>
                                     <td style="width:150px; text-align-last:center;">
-                                        @Html.DisplayFor(modelItem => item.TipoPessoaFormatado)
+                                        @this.FormataTipoPessoa(item.TipoPessoa)
                                     </td>
                                     <td style="width:150px; text-align-last:center;">
-                                        @Html.DisplayFor(modelItem => item.DescricaoStatus)
+                                        @this.FormataStatus(item.Status)
                                     </td>
                                     <td style="width:100px; text-align-last:center;">
-                                        <button type="button" class="btn btn-primary btn-sm btnEditarCliente" id="btnEditarCliente" data-id="@item.Codigo" data-toggle="modal"><i class="fa fa-edit" data-toggle="tooltip" title="Editar"></i></button>
-                                        <button type="button" class="btn btn-danger btn-sm btnDeleteCliente" data-id="@item.Codigo" data-nome="@item.Nome" data-toggle="modal"><i class="fa fa-trash" data-toggle="tooltip" title="Excluir"></i></button>
+                                        @{
+                                            string displayStatus = (item.Status ? "display:block" : "display:none");
+                                            string displayStatusReativar = (!item.Status ? "display:block" : "display: none");
+                                        }
+                                        <div class="row" style="@displayStatusReativar">
+                                            <button type="button" class="btn btn-success btn-sm btnReativarCliente" data-id="@item.Codigo" data-nome="@item.Nome" data-toggle="modal"><i class="fa fa-refresh fa-spin" data-toggle="tooltip" title="Reativar"></i></button>
+                                        </div>
+                                        <div class="row" style="@displayStatus">
+                                            <button type="button" class="btn btn-primary btn-sm btnEditarCliente" id="btnEditarCliente" data-id="@item.Codigo" data-toggle="modal"><i class="fa fa-edit" data-toggle="tooltip" title="Editar"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm btnDeleteCliente" data-id="@item.Codigo" data-nome="@item.Nome" data-toggle="modal"><i class="fa fa-trash" data-toggle="tooltip" title="Excluir"></i></button>
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -89,7 +99,7 @@
     </div>
 </section>
 
-<!-- Modal -->
+<!-- Modal Generic -->
 <div class="modal fade" id="modalCliente" tabindex="-1" role="dialog" aria-labelledby="modalClienteTitle" aria-hidden="true">
 </div>
 
@@ -112,7 +122,7 @@
     </div>
 </div>
 
-<!-- Bootstrap modal popup -->
+<!-- Bootstrap modal popup Delete -->
 <div class="modal fade" id="modalDeleteCliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -128,6 +138,27 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-dismiss="modal">Não</button>
                 <button class="btn btn-success delete-confirm">Sim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap modal popup Reativar -->
+<div class="modal fade" id="modalReativarCliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-primary">
+                <h4 class="modal-title" id="myModalLabel">Reativação de Cliente</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="dvCodigo"></div>
+            <div class="modal-body" id="modal-body-Cliente1">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Não</button>
+                <button class="btn btn-success reativa-confirm">Sim</button>
             </div>
         </div>
     </div>

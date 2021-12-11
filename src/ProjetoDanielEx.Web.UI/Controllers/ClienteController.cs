@@ -54,6 +54,34 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         public async Task<IActionResult> Create(ClienteViewModel cliente)
         {
             string mensagem = string.Empty;
+            var cpfcnpj = ValidarCPFCNPJ(ValidationCPFCNPJ.SemFormatacaoCPFCNPJ(cliente.Documento));
+
+            if (!string.IsNullOrEmpty(cpfcnpj))
+            {
+                return Json(new { success = false, mensagem = cpfcnpj });
+            }
+
+            var nomeExiste = await _unitOfWork.ClienteApp.NomeExiste(cliente.Nome);
+            if (nomeExiste.Data != null)
+            {
+                mensagem = Mensagens.MSG_NOME_CLIENTE.ToFormat(cliente.Nome);
+                return Json(new { success = false, mensagem = mensagem });
+            }
+
+            if (!string.IsNullOrEmpty(cliente.Documento))
+            {
+                var documentoExiste = await _unitOfWork.ClienteApp.DocumentoExiste(ValidationCPFCNPJ.SemFormatacaoCPFCNPJ(cliente.Documento));
+                if (documentoExiste.Data != null)
+                {
+                    mensagem = Mensagens.MSG_DOCUMENTO_CLIENTE.ToFormat(cliente.Documento);
+                    return Json(new { success = false, mensagem = mensagem });
+                }
+            }
+            else
+            {
+                mensagem = Mensagens.MSG_VALIDARCPFCNPJ_FALHA.ToFormat("CNPJ");
+                return Json(new { success = false, mensagem = mensagem });
+            }
 
             var clienteDomain = _mapper.Map<ClienteViewModel, RequestAdicionarCliente>(cliente);
             var response = await _unitOfWork.ClienteApp.Adicionar(clienteDomain);
@@ -81,6 +109,20 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         {
             string mensagem = string.Empty;
 
+            var cpfcnpj = ValidarCPFCNPJ(ValidationCPFCNPJ.SemFormatacaoCPFCNPJ(cliente.Documento));
+            if (!string.IsNullOrEmpty(cpfcnpj))
+            {
+                return Json(new { success = false, mensagem = cpfcnpj });
+            }
+            else
+            {
+                if (cliente.Documento.Equals(@"00.000.000/0000-00"))
+                {
+                    mensagem = Mensagens.MSG_VALIDARCPFCNPJ_FALHA.ToFormat("CNPJ");
+                    return Json(new { success = false, mensagem = mensagem });
+                }
+            }
+
             var clienteDomain = _mapper.Map<RequestAtualizarCliente>(cliente);
             var response = await _unitOfWork.ClienteApp.Atualizar(clienteDomain);
 
@@ -97,7 +139,7 @@ namespace ProjetoDanielEx.Web.UI.Controllers
         {
             string mensagem = string.Empty;
 
-            var response = await _unitOfWork.ClienteApp.Deletar(new RequestExcluirCliente()
+            var response = await _unitOfWork.ClienteApp.Deletar(new RequestReativarExcluirCliente()
             {
                 Codigo = codigo
             });
@@ -106,6 +148,24 @@ namespace ProjetoDanielEx.Web.UI.Controllers
                 mensagem = Mensagens.MSG_FALHA.ToFormat("excluir", "o Cliente");
             else
                 mensagem = Mensagens.MSG_SUCESSO.ToFormat("excluído", "Cliente");
+
+            return Json(new { success = true, mensagem = mensagem });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Reativar(int codigo)
+        {
+            string mensagem = string.Empty;
+
+            var response = await _unitOfWork.ClienteApp.Reativar(new RequestReativarExcluirCliente()
+            {
+                Codigo = codigo
+            });
+
+            if (!(bool)response.Data)
+                mensagem = Mensagens.MSG_FALHA.ToFormat("reativar", "o Cliente");
+            else
+                mensagem = Mensagens.MSG_SUCESSO.ToFormat("reativado", "Cliente");
 
             return Json(new { success = true, mensagem = mensagem });
         }
@@ -139,6 +199,23 @@ namespace ProjetoDanielEx.Web.UI.Controllers
             var clienteView = _mapper.Map<ClienteDTO, ClienteViewModel>(response?.Data ?? new ClienteDTO());
             clienteView.ListaTipoPessoa = GetTipoPessoa();
             return clienteView;
+        }
+
+        private string ValidarCPFCNPJ(string cpfcnpj)
+        {
+            switch (cpfcnpj.Length)
+            {
+                case 11:
+                    if (!ValidationCPFCNPJ.ValidaCPF(cpfcnpj))
+                        return Mensagens.MSG_VALIDARCPFCNPJ_FALHA.ToFormat("CPF");
+                    break;
+                default:
+                    if (!ValidationCPFCNPJ.ValidaCNPJ(cpfcnpj))
+                        return Mensagens.MSG_VALIDARCPFCNPJ_FALHA.ToFormat("CNPJ");
+                    break;
+            }
+
+            return string.Empty;
         }
 
         #endregion

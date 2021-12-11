@@ -1,6 +1,6 @@
 ﻿namespace ProjetoDanielEx.Web.UI.Application.Request.Cliente
 {
-    public class RequestExcluirCliente
+    public class RequestReativarExcluirCliente
     {
         public int Codigo { get; set; }
     }
