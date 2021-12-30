@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjetoDanielEx.Web.UI.ViewModel
 {
@@ -22,16 +21,12 @@ namespace ProjetoDanielEx.Web.UI.ViewModel
         [Required(ErrorMessage = "* O campo {0} é obrigatório")]
         public string TipoPessoa { get; set; }
 
-        public string TipoPessoaFormatado { get; set; }
-
-        [DisplayName("Status:")]
-        public string DescricaoStatus { get; set; }
-
-        [DisplayName("CPF / CNPJ:")]
-        public string CPFCNPJFormatado { get; set; }
+        public bool Status { get; set; }
 
         public Dictionary<string, string> ListaTipoPessoa { get; set; }
 
         public string Mensagem { get; set; }
+
+        public EnderecoViewModel Endereco { get; set; }
     }
 }

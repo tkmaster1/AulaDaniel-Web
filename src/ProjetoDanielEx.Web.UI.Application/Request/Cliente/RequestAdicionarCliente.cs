@@ -7,5 +7,7 @@
         public string Documento { get; set; }
 
         public string TipoPessoa { get; set; }
+
+        public RequestEndereco Endereco { get; set; }
     }
 }

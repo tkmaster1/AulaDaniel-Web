@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ProjetoDanielEx.Web.UI.Application.DTO
+﻿namespace ProjetoDanielEx.Web.UI.Application.DTO
 {
     public class ClienteDTO
     {
@@ -12,10 +10,8 @@ namespace ProjetoDanielEx.Web.UI.Application.DTO
 
         public string TipoPessoa { get; set; }
 
-        public string TipoPessoaFormatado { get; set; }
+        public bool  Status { get; set; }
 
-        public string DescricaoStatus { get; set; }
-
-        public string CPFCNPJFormatado { get; set; }
+        public virtual EnderecoDTO Endereco { get; set; }
     }
 }

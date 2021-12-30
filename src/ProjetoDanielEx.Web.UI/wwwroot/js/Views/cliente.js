@@ -1,5 +1,10 @@
 ﻿/* Arquivo .js que contém todas funções necessárias para a página de Cliente */
 
+//Faz com que o Scroll do modal volte após clicar em fechar
+$(document).ready(function () {
+    $('.modal').css('overflow-y', 'auto');
+});
+
 $(document).ready(function () {
 
     $('#dtCliente').DataTable({
@@ -64,6 +69,42 @@ $(document).ready(function () {
                         bootbox.alert(result.mensagem);
                     } else {
                         $('#modalDeleteCliente').html(result.mensagem);
+                    }
+                },
+                error: function (er) {
+                    bootbox.alert(er);
+                }
+            });
+        });
+    });
+
+    $(document).on('click', '.btnReativarCliente', function (e) {
+        e.preventDefault();
+
+        debugger;
+        id = $(this).data('id');
+        var nome = $(this).data('nome');
+
+        var msg = "<p class=\"success-message\">Deseja reativar realmente este Cliente: <b>" + nome + "</b>?</p>";
+        var codHidden = "<input type=\"hidden\" id=\"hdCodigoCliente\" value=\"" + id + "\"/>";
+
+        $("#dvCodigo").html(codHidden);
+        $("#modal-body-Cliente1").html(msg);
+        $("#modalReativarCliente").modal('show');
+
+        $('#modalReativarCliente').on('click', '.reativa-confirm', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "GET",
+                url: '/Cliente/Reativar',
+                data: { codigo: id },
+                success: function (result) {
+                    if (result.success) {
+                        $("#modalReativarCliente").modal("hide");
+                        bootbox.alert(result.mensagem);
+                    } else {
+                        $('#modalReativarCliente').html(result.mensagem);
                     }
                 },
                 error: function (er) {

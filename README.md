@@ -5,3 +5,5 @@ Linguagem C#, MVC Razor, Bootstrap, Javascript, Jquery, CSS, DDD, consumo de Web
 - Menu: Cliente
   - Index com consulta de banco
   - Modal de incluir cliente
+  - Validação de CPF e CNPJ in server
+  - Criação de RazorExtensions

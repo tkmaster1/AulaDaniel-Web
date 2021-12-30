@@ -62,13 +62,53 @@ namespace ProjetoDanielEx.Web.UI.Application.Services
             return await _service.MontarResponse<object>(request);
         }
 
-        public async Task<RetornoAPIData<object>> Deletar(RequestExcluirCliente req)
+        public async Task<RetornoAPIData<object>> Deletar(RequestReativarExcluirCliente req)
         {
             string url = $"{_service.UrlBase}/Cliente/Excluir/";
 
             var request = _service.MontarRequest("PUT", url, req);
 
             return await _service.MontarResponse<object>(request);
+        }
+
+        public async Task<RetornoAPIData<object>> Reativar(RequestReativarExcluirCliente req)
+        {
+            string url = $"{_service.UrlBase}/Cliente/Reativar/";
+
+            var request = _service.MontarRequest("PUT", url, req);
+
+            return await _service.MontarResponse<object>(request);
+        }
+
+        public async Task<RetornoAPIData<ClienteDTO>> NomeExiste(string nomeCliente)
+        {
+            string url = $"{_service.UrlBase}/Cliente/NomeExiste/{nomeCliente}";
+
+            var request = _service.MontarRequest("GET", url);
+
+            var response = await _service.MontarResponse<ClienteDTO>(request);
+
+            return response;
+        }
+
+        public async Task<RetornoAPIData<ClienteDTO>> DocumentoExiste(string documento)
+        {
+            string url = $"{_service.UrlBase}/Cliente/DocumentoExiste/{documento}";
+
+            var request = _service.MontarRequest("GET", url);
+
+            var response = await _service.MontarResponse<ClienteDTO>(request);
+
+            return response;
+        }
+
+        public async Task<RetornoAPIData<ClienteDTO>> ObterClienteEndereco(int codigo)
+        {
+            string url = $"{_service.UrlBase}/Cliente/ObterClienteEndereco/{codigo.ToString()}";
+
+            var request = _service.MontarRequest("GET", url);
+
+            return await _service.MontarResponse<ClienteDTO>(request);
         }
 
         #endregion

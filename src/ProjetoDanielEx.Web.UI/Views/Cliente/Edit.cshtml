@@ -12,7 +12,7 @@
     });
 </script>
 
-<div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header alert alert-primary">
             <h5 class="modal-title" id="exampleModalLongTitle">Edição de Cliente</h5>
@@ -25,7 +25,7 @@
             <input type="hidden" asp-for="Codigo" />
             <div class="modal-body">
                 <div class="form-horizontal">
-                    <div class="row">
+                    <div class="row form-group">
                         <div class="col-12">
                             <label asp-for="Nome"></label>
                             <div class="col-md-12">
@@ -33,12 +33,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <br />
-                    </div>
-                    <div class="row">
+                    <div class="row form-group">
                         <div class="col-7">
-                            <label asp-for="CPFCNPJFormatado"></label>
+                            <label asp-for="Documento"></label>
                             <div class="col-md-12">
                                 <input asp-for="Documento" class="form-control" />
                             </div>
@@ -52,6 +49,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <br />
+                    </div>
+                    <h4>Endereço</h4>
+                    <hr />
+                    <partial name="_AtualizarEndereco" />
                 </div>
             </div>
             <div class="modal-footer">
@@ -67,10 +70,17 @@
 
     function fnValidarCliente() {
 
+        // Todos os campos
         if (($('#TipoPessoa option:selected').val() == "0" ||
             $('#TipoPessoa option:selected').val() == "" ||
-            $('#TipoPessoa option:selected').val() == null) && ($('#Nome').val() == "") && ($('#Documento').val() == "")) {
-            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "O campo CPF/CNPJ é obrigatório!", "O campo Nome é obrigatório!");
+            $('#TipoPessoa option:selected').val() == null) && ($('#Nome').val() == "") && ($('#Documento').val() == "")
+            && ($("#Endereco_Cep").val() == "") && ($('#Endereco_Logradouro').val() == "") && ($('#Endereco_Numero').val() == "")
+            && ($('#Endereco_Bairro').val() == "") && ($('#Endereco_Cidade').val() == "") && ($('#Endereco_Estado').val() == "")
+
+        ) {
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "O campo Documento é obrigatório!", "O campo Nome é obrigatório!",
+                "O Campo Logradouro é obrigatório!", "O campo Bairro é obrigatório!", "O campo Cidade é obrigatório!", "O campo Estado é obrigatório!",
+                "O campo Cep é obrigatório!", "O campo Número é obrigatório!");
             return false;
         }
 
@@ -78,24 +88,54 @@
             $('#TipoPessoa option:selected').val() == "" ||
             $('#TipoPessoa option:selected').val() == null)) {
 
-            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "", "");
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "", "", "", "", "", "", "", "");
             return false;
         }
 
         if ($('#Nome').val() == "") {
-            mensagensErros("", "", "O campo Nome é obrigatório!");
+            mensagensErros("", "", "O campo Nome é obrigatório!", "", "", "", "", "", "");
             return false;
         }
 
         if ($('#Documento').val() == "") {
-            mensagensErros("", "O campo CPF/CNPJ é obrigatório!", "");
+            mensagensErros("", "O campo Documento é obrigatório!", "", "", "", "", "", "", "");
             return false;
         }
 
         if (($('#TipoPessoa option:selected').val() == "f" && $('#Documento').val().length > 14) ||
             ($('#TipoPessoa option:selected').val() == "j" && $('#Documento').val().length < 18)) {
+            mensagensErros("O Campo Documento não corresponde com o Tipo Pessoa", "", "", "", "", "", "", "", "");
+            return false;
+        }
 
-            mensagensErros("O Campo CPF/CNPJ não corresponde com o Tipo Pessoa", "", "");
+        // Endereço
+        if ($("#Endereco_Cep").val() == "") {
+            mensagensErros("", "", "", "", "", "", "", "O campo Cep é obrigatório!", "");
+            return false;
+        }
+
+        if ($("#Endereco_Logradouro").val() == "") {
+            mensagensErros("", "", "", "O campo Logradouro é obrigatório!", "", "", "", "", "");
+            return false;
+        }
+
+        if ($("#Endereco_Numero").val() == "") {
+            mensagensErros("", "", "", "", "", "", "", "", "O campo Número é obrigatório!");
+            return false;
+        }
+
+        if ($('#Endereco_Bairro').val() == "") {
+            mensagensErros("", "", "", "", "O campo Bairro é obrigatório!", "", "", "", "");
+            return false;
+        }
+
+        if ($('#Endereco_Cidade').val() == "") {
+            mensagensErros("", "", "", "", "", "O campo Cidade é obrigatório!", "", "", "");
+            return false;
+        }
+
+        if ($('#Endereco_Estado').val() == "") {
+            mensagensErros("", "", "", "", "", "", "O campo Estado é obrigatório!", "", "");
             return false;
         }
 
@@ -111,13 +151,15 @@
                 url: "@Url.Action("Edit", "Cliente")",
                 data: $('#form1').serialize(),
                 success: function (result) {
+
                     if (result.success) {
                         $('#modalCliente').modal('hide');
                         bootbox.alert(result.mensagem);
                         // window.location = window.location;
 
                     } else {
-                        $('#modalCliente').html(result.mensagem);
+                        mensagensErros("", result.mensagem, "");
+                        return false;
                     }
                 },
                 error: function (errormessage) {
@@ -130,10 +172,10 @@
     });
 
     // modal Mensagens
-    function mensagensErros(validTipoPessoa, validDocumento, validNome) {
+    function mensagensErros(validTipoPessoa, validDocumento, validNome, validLogradouro, validBairro, validCidade, validEstado, validCep, validNumero) {
         $('.img-loader').css("display", "none");
         $('.mensagemRetorno').empty();
-        $('#tituloModalRetorno').text("Alerta: Edição de Cliente");
+        $('#tituloModalRetorno').text("Alerta: Cadastro de Cliente");
         $('.mensagemRetorno').append('<p>Foram encontrados os seguintes erros ao salvar:</p>');
         $('.mensagemRetorno').append('<ul id="listaErros"></ul>');
 
@@ -149,8 +191,35 @@
             $('#listaErros').append('<li>' + validNome + '</li>');
         }
 
+        // Endereco
+        if (validLogradouro !== "") {
+            $('#listaErros').append('<li>' + validLogradouro + '</li>');
+        }
+
+        if (validBairro !== "") {
+            $('#listaErros').append('<li>' + validBairro + '</li>');
+        }
+
+        if (validCidade !== "") {
+            $('#listaErros').append('<li>' + validCidade + '</li>');
+        }
+
+        if (validEstado !== "") {
+            $('#listaErros').append('<li>' + validEstado + '</li>');
+        }
+
+        if (validCep !== "") {
+            $('#listaErros').append('<li>' + validCep + '</li>');
+        }
+
+        if (validNumero !== "") {
+            $('#listaErros').append('<li>' + validNumero + '</li>');
+        }
+
         $("#modalRetorno").modal({ backdrop: 'static', keyboard: false });
         $("#btnSalvarModalNovo").removeAttr("disabled");
         $("#btnCancelarModalNovo").removeAttr("disabled");
     }
+
+    BuscaCep();
 </script>
