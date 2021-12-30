@@ -1,0 +1,55 @@
+﻿@model ClienteViewModel
+
+<div class="row form-group">
+    <div class="col-5">
+        <label asp-for="Endereco.Cep" class="control-label"></label><b class="obrigatorio">*</b>
+        <div class="col-md-12">
+            <input asp-for="Endereco.Cep" class="form-control" />
+        </div>
+    </div>
+    <div class="col-7">
+        <label asp-for="Endereco.Logradouro" class="control-label"></label><b class="obrigatorio">*</b>
+        <div class="col-md-12">
+            <input asp-for="Endereco.Logradouro" class="form-control" />
+        </div>
+    </div>
+</div>
+<div class="row form-group">
+    <div class="col-5">
+        <label asp-for="Endereco.Numero" class="control-label"></label><b class="obrigatorio">*</b>
+        <div class="col-md-12">
+            <input asp-for="Endereco.Numero" class="form-control" />
+        </div>
+    </div>
+    <div class="col-7">
+        <label asp-for="Endereco.Complemento" class="control-label"></label>
+        <div class="col-md-12">
+            <input asp-for="Endereco.Complemento" class="form-control" />
+        </div>
+    </div>
+</div>
+<div class="row form-group">
+    <div class="col-5">
+        <label asp-for="Endereco.Bairro" class="control-label"></label><b class="obrigatorio">*</b>
+        <div class="col-md-12">
+            <input asp-for="Endereco.Bairro" class="form-control" />
+        </div>
+    </div>
+    <div class="col-7">
+        <label asp-for="Endereco.Cidade" class="control-label"></label><b class="obrigatorio">*</b>
+        <div class="col-md-12">
+            <input asp-for="Endereco.Cidade" class="form-control" />
+        </div>
+    </div>
+</div>
+<div class="row form-group">
+    <div class="col-5">
+        <label asp-for="Endereco.Estado" class="control-label"></label><b class="obrigatorio">*</b>
+        <div class="col-md-12">
+            <input asp-for="Endereco.Estado" class="form-control" />
+        </div>
+    </div>
+    <div class="col-7">
+        &nbsp;
+    </div>
+</div>

@@ -195,7 +195,7 @@ namespace ProjetoDanielEx.Web.UI.Controllers
 
         private async Task<ClienteViewModel> ObterCliente(int id)
         {
-            var response = await _unitOfWork.ClienteApp.ObterPorCodigo(id);
+            var response = await _unitOfWork.ClienteApp.ObterClienteEndereco(id);
             var clienteView = _mapper.Map<ClienteDTO, ClienteViewModel>(response?.Data ?? new ClienteDTO());
             clienteView.ListaTipoPessoa = GetTipoPessoa();
             return clienteView;

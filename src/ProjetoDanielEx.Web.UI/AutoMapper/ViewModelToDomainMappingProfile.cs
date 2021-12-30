@@ -9,9 +9,14 @@ namespace ProjetoDanielEx.Web.UI.AutoMapper
     {
         public ViewModelToDomainMappingProfile()
         {
+            // Cliente
             CreateMap<ClienteViewModel, ClienteDTO>();
             CreateMap<ClienteViewModel, RequestAdicionarCliente>();
             CreateMap<ClienteViewModel, RequestAtualizarCliente>();
+
+            // Endereco
+            CreateMap<EnderecoViewModel, EnderecoDTO>().ReverseMap();
+            CreateMap<EnderecoViewModel, RequestEndereco>().ReverseMap();
         }
     }
 }

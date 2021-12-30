@@ -22,5 +22,7 @@ namespace ProjetoDanielEx.Web.UI.Application.Interfaces
         Task<RetornoAPIData<ClienteDTO>> NomeExiste(string nomeCliente);
 
         Task<RetornoAPIData<ClienteDTO>> DocumentoExiste(string documento);
+
+        Task<RetornoAPIData<ClienteDTO>> ObterClienteEndereco(int codigo);
     }
 }

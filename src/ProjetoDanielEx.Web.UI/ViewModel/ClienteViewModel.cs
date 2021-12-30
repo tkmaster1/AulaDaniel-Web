@@ -26,5 +26,7 @@ namespace ProjetoDanielEx.Web.UI.ViewModel
         public Dictionary<string, string> ListaTipoPessoa { get; set; }
 
         public string Mensagem { get; set; }
+
+        public EnderecoViewModel Endereco { get; set; }
     }
 }

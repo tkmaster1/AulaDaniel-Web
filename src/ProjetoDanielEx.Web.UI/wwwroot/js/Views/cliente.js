@@ -1,5 +1,10 @@
 ﻿/* Arquivo .js que contém todas funções necessárias para a página de Cliente */
 
+//Faz com que o Scroll do modal volte após clicar em fechar
+$(document).ready(function () {
+    $('.modal').css('overflow-y', 'auto');
+});
+
 $(document).ready(function () {
 
     $('#dtCliente').DataTable({

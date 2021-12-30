@@ -13,7 +13,7 @@
 
 </script>
 
-<div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header alert alert-success">
             <h5 class="modal-title" id="exampleModalLongTitle">Inclusão de Cliente</h5>
@@ -25,26 +25,23 @@
             @Html.AntiForgeryToken()
             <div class="modal-body">
                 <div class="form-horizontal">
-                    <div class="row">
+                    <div class="row form-group">
                         <div class="col-12">
-                            <label asp-for="Nome"></label>
+                            <label asp-for="Nome"></label><b class="obrigatorio">*</b>
                             <div class="col-md-12">
                                 <input asp-for="Nome" class="form-control" />
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <br />
-                    </div>
-                    <div class="row">
+                    </div>                   
+                    <div class="row form-group">
                         <div class="col-7">
-                            <label asp-for="Documento"></label>
+                            <label asp-for="Documento"></label><b class="obrigatorio">*</b>
                             <div class="col-md-12">
                                 <input asp-for="Documento" class="form-control" />
                             </div>
                         </div>
                         <div class="col-5">
-                            <label asp-for="TipoPessoa"></label>
+                            <label asp-for="TipoPessoa"></label><b class="obrigatorio">*</b>
                             <div class="col-md-12">
                                 <select asp-for="TipoPessoa" asp-items="@(new SelectList(Model.ListaTipoPessoa, "Key", "Value"))" class="form-control">
                                     <option value="">- Selecione -</option>
@@ -52,6 +49,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <br />
+                    </div>
+                    <h4>Endereço</h4>
+                    <hr />
+                    <partial name="_Endereco" />
                 </div>
             </div>
             <div class="modal-footer">
@@ -68,10 +71,14 @@
 
         if (($('#TipoPessoa option:selected').val() == "0" ||
             $('#TipoPessoa option:selected').val() == "" ||
-            $('#TipoPessoa option:selected').val() == null) &&
-            ($('#Nome').val() == "") &&
-            ($('#Documento').val() == "")) {
-            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "O campo CPF/CNPJ é obrigatório!", "O campo Nome é obrigatório!");
+            $('#TipoPessoa option:selected').val() == null) && ($('#Nome').val() == "") && ($('#Documento').val() == "")
+            && ($("#Endereco_Cep").val() == "") && ($('#Endereco_Logradouro').val() == "") && ($('#Endereco_Numero').val() == "")
+            && ($('#Endereco_Bairro').val() == "") && ($('#Endereco_Cidade').val() == "") && ($('#Endereco_Estado').val() == "")
+
+        ) {
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "O campo Documento é obrigatório!", "O campo Nome é obrigatório!",
+                "O Campo Logradouro é obrigatório!", "O campo Bairro é obrigatório!", "O campo Cidade é obrigatório!", "O campo Estado é obrigatório!",
+                "O campo Cep é obrigatório!", "O campo Número é obrigatório!");
             return false;
         }
 
@@ -79,24 +86,55 @@
             $('#TipoPessoa option:selected').val() == "" ||
             $('#TipoPessoa option:selected').val() == null)) {
 
-            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "", "");
+            mensagensErros("O Campo Tipo Pessoa é obrigatório!", "", "", "", "", "", "", "", "");
             return false;
         }
 
         if ($('#Nome').val() == "") {
-            mensagensErros("", "", "O campo Nome é obrigatório!");
+            mensagensErros("", "", "O campo Nome é obrigatório!", "", "", "", "", "", "");
             return false;
         }
 
         if ($('#Documento').val() == "") {
-            mensagensErros("", "O campo Documento é obrigatório!", "");
+            mensagensErros("", "O campo Documento é obrigatório!", "", "", "", "", "", "", "");
             return false;
         }
 
         if (($('#TipoPessoa option:selected').val() == "f" && $('#Documento').val().length > 14) ||
             ($('#TipoPessoa option:selected').val() == "j" && $('#Documento').val().length < 18)) {
 
-            mensagensErros("O Campo Documento não corresponde com o Tipo Pessoa", "", "");
+            mensagensErros("O Campo Documento não corresponde com o Tipo Pessoa", "", "", "", "", "", "", "", "");
+            return false;
+        }
+
+        // Endereço
+        if ($("#Endereco_Cep").val() == "") {
+            mensagensErros("", "", "", "", "", "", "", "O campo Cep é obrigatório!", "");
+            return false;
+        }
+
+        if ($("#Endereco_Logradouro").val() == "") {
+            mensagensErros("", "", "", "O campo Logradouro é obrigatório!", "", "", "", "", "");
+            return false;
+        }
+
+        if ($("#Endereco_Numero").val() == "") {
+            mensagensErros("", "", "", "", "", "", "", "", "O campo Número é obrigatório!");
+            return false;
+        }
+
+        if ($('#Endereco_Bairro').val() == "") {
+            mensagensErros("", "", "", "", "O campo Bairro é obrigatório!", "", "", "", "");
+            return false;
+        }
+
+        if ($('#Endereco_Cidade').val() == "") {
+            mensagensErros("", "", "", "", "", "O campo Cidade é obrigatório!", "", "", "");
+            return false;
+        }
+
+        if ($('#Endereco_Estado').val() == "") {
+            mensagensErros("", "", "", "", "", "", "O campo Estado é obrigatório!", "", "");
             return false;
         }
 
@@ -132,7 +170,7 @@
     });
 
     // modal Mensagens
-    function mensagensErros(validTipoPessoa, validDocumento, validNome) {
+    function mensagensErros(validTipoPessoa, validDocumento, validNome, validLogradouro, validBairro, validCidade, validEstado, validCep, validNumero) {
         $('.img-loader').css("display", "none");
         $('.mensagemRetorno').empty();
         $('#tituloModalRetorno').text("Alerta: Cadastro de Cliente");
@@ -151,8 +189,36 @@
             $('#listaErros').append('<li>' + validNome + '</li>');
         }
 
+        // Endereco
+        if (validLogradouro !== "") {
+            $('#listaErros').append('<li>' + validLogradouro + '</li>');
+        }
+
+        if (validBairro !== "") {
+            $('#listaErros').append('<li>' + validBairro + '</li>');
+        }
+
+        if (validCidade !== "") {
+            $('#listaErros').append('<li>' + validCidade + '</li>');
+        }
+
+        if (validEstado !== "") {
+            $('#listaErros').append('<li>' + validEstado + '</li>');
+        }
+
+        if (validCep !== "") {
+            $('#listaErros').append('<li>' + validCep + '</li>');
+        }
+
+        if (validNumero !== "") {
+            $('#listaErros').append('<li>' + validNumero + '</li>');
+        }
+
         $("#modalRetorno").modal({ backdrop: 'static', keyboard: false });
         $("#btnSalvarModalNovo").removeAttr("disabled");
         $("#btnCancelarModalNovo").removeAttr("disabled");
     }
+
+    BuscaCep();
+
 </script>

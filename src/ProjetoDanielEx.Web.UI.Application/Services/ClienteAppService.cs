@@ -102,6 +102,15 @@ namespace ProjetoDanielEx.Web.UI.Application.Services
             return response;
         }
 
+        public async Task<RetornoAPIData<ClienteDTO>> ObterClienteEndereco(int codigo)
+        {
+            string url = $"{_service.UrlBase}/Cliente/ObterClienteEndereco/{codigo.ToString()}";
+
+            var request = _service.MontarRequest("GET", url);
+
+            return await _service.MontarResponse<ClienteDTO>(request);
+        }
+
         #endregion
     }
 }
