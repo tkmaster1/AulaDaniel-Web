@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +19,14 @@ namespace ProjetoDanielEx.Web.UI.Configurations
                 o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
 
-            services.AddControllers();
+            services.AddControllers(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                                 .RequireAuthenticatedUser()
+                                 .Build();
+
+                config.Filters.Add(new AuthorizeFilter(policy));
+            });
 
             services.AddRazorPages();
 
@@ -32,7 +41,19 @@ namespace ProjetoDanielEx.Web.UI.Configurations
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpContextAccessor();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
+
             services.AddCors();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             return services;
         }

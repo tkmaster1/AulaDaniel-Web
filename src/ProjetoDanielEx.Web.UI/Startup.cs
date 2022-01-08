@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,7 +29,7 @@ namespace ProjetoDanielEx.Web.UI
                 .AddJsonFile("appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true)
                 .AddEnvironmentVariables();
-            
+
             _env = hostEnvironment;
 
             Configuration = builder.Build();
@@ -40,6 +41,8 @@ namespace ProjetoDanielEx.Web.UI
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentityConfiguration(Configuration);
+
             services.AddAutoMapperConfiguration();
 
             services.AddHttpClient();
@@ -51,6 +54,14 @@ namespace ProjetoDanielEx.Web.UI
             services.AddMvcConfiguration(Configuration);
 
             services.AddDependencyInjectionConfiguration();
+
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+
+                options.EnableEndpointRouting = false;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -70,7 +81,10 @@ namespace ProjetoDanielEx.Web.UI
 
             app.UseRouting();
 
-            // app.UseAuthorization();
+            app.UseCookiePolicy();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseGlobalizationConfig();
 
@@ -79,6 +93,7 @@ namespace ProjetoDanielEx.Web.UI
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
 
