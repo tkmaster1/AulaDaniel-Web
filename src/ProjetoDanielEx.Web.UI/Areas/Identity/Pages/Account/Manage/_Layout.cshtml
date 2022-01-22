@@ -1,29 +1,85 @@
-﻿@{
-    if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
-    {
-        Layout = (string)parentLayout;
-    }
-    else
-    {
-        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
-    }
+﻿@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Manage your account</h2>
-
-<div>
-    <h4>Change your account settings</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
-        </div>
-        <div class="col-md-9">
-            @RenderBody()
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Perfil do usuário</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active">Perfil de usuário</li>
+                </ol>
+            </div>
         </div>
     </div>
-</div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Profile Image -->
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            <img class="profile-user-img img-fluid img-circle"
+                                 src="~/dist/img/user4-128x128.jpg"
+                                 alt="User profile picture">
+                        </div>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <h3 class="profile-username text-center">@User.Identity.Name</h3>
+                        }
+                        else
+                        {
+                            <h3 class="profile-username text-center">Nina Mcintire</h3>
+                        }
+
+                        <p class="text-muted text-center">Software Engineer</p>
+
+                        <a href="https://github.com/tkmaster1?tab=followers" target="_blank" class="btn btn-primary btn-block"><b>Follow in GitHub</b></a>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills" id="myDIV">
+                            <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" asp-page="./Index">Perfil</a></li>
+                            <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" asp-page="./ChangePassword">Senha</a></li>
+                        </ul>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="col-md-9">
+                                <partial name="_StatusMessage" model="Model.StatusMessage" />
+                                @RenderBody()
+                            </div>
+                        </div>
+                        <!-- /.tab-content -->
+                    </div><!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
 
 @section Scripts {
+
     @RenderSection("Scripts", required: false)
 }

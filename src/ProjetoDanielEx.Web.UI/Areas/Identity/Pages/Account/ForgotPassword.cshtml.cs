@@ -10,14 +10,24 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using ProjetoDanielEx.Web.UI.Areas.Identity.Models;
 
 namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
+        #region Propertries
+
+        [BindProperty]
+        public InputEmailModel Input { get; set; }
+
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
+
+        #endregion
+
+        #region Constructor
 
         public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
         {
@@ -25,29 +35,21 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
-        [BindProperty]
-        public InputModel Input { get; set; }
+        #endregion
 
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
-        }
+        #region Methods
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToPage("./ForgotPasswordConfirmation");
-                }
+                //if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                //{
+                //    // Don't reveal that the user does not exist or is not confirmed
+                //    return RedirectToPage("./ForgotPasswordConfirmation");
+                //}
 
-                // For more information on how to enable account confirmation and password reset please 
-                // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Page(
@@ -56,15 +58,18 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
+                // "Reset Password" == Redefinir senha
                 await _emailSender.SendEmailAsync(
                     Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Redefinir senha",
+                    $"Por favor, redefina sua senha <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
             return Page();
         }
+
+        #endregion
     }
 }

@@ -6,13 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ProjetoDanielEx.Web.UI.Areas.Identity.Models;
 
 namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {
+        #region Propertries
+
+        [TempData]
+        public string StatusMessage { get; set; }
+
+        [BindProperty]
+        public InputIndexModel Input { get; set; }
+
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+
+        #endregion
+
+        #region Constructor
 
         public IndexModel(
             UserManager<IdentityUser> userManager,
@@ -22,30 +35,20 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        public string Username { get; set; }
+        #endregion
 
-        [TempData]
-        public string StatusMessage { get; set; }
-
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public class InputModel
-        {
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
-        }
+        #region Methods
 
         private async Task LoadAsync(IdentityUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
+            var email = await _userManager.GetEmailAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            Username = userName;
-
-            Input = new InputModel
+            Input = new InputIndexModel
             {
+                Username = userName,
+                Email = email,
                 PhoneNumber = phoneNumber
             };
         }
@@ -55,7 +58,7 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Incapaz de carregar usuário com ID '{_userManager.GetUserId(User)}'.");
             }
 
             await LoadAsync(user);
@@ -67,13 +70,25 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Incapaz de carregar usuário com ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (!ModelState.IsValid)
+            var email = await _userManager.GetEmailAsync(user);
+            if (email == string.Empty)
             {
-                await LoadAsync(user);
+                StatusMessage = "Erro: Email é obrigatório!";
                 return Page();
+            }
+
+            var username = await _userManager.GetUserNameAsync(user);
+            if (Input.Username != username)
+            {
+                var setUsernameResult = await _userManager.SetUserNameAsync(user, Input.Username);
+                if (!setUsernameResult.Succeeded)
+                {
+                    StatusMessage = "Erro inesperado ao tentar inserir o Nome.";
+                    return Page();
+                }
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
@@ -82,14 +97,22 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account.Manage
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
+                    StatusMessage = "Erro inesperado ao tentar definir o número de telefone.";
+                    return Page();
                 }
             }
 
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
-            return RedirectToPage();
+            var user1 = await _userManager.GetUserAsync(User);
+            if (user1 == null)
+            {
+                return NotFound($"Incapaz de carregar usuário com ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            await _signInManager.RefreshSignInAsync(user1);
+            StatusMessage = "Seu perfil foi atualizado.";
+            return RedirectToPage("./Index");
         }
+
+        #endregion
     }
 }

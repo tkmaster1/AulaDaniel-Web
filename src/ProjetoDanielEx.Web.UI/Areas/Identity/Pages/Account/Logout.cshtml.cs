@@ -13,14 +13,24 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class LogoutModel : PageModel
     {
+        #region Propertries
+
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+
+        #endregion
+
+        #region Constructor
 
         public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
         }
+
+        #endregion
+
+        #region Methods
 
         public void OnGet()
         {
@@ -29,15 +39,10 @@ namespace ProjetoDanielEx.Web.UI.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
-            if (returnUrl != null)
-            {
-                return LocalRedirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToPage();
-            }
+            _logger.LogInformation("Usuário desconectado.");
+            return returnUrl != null ? LocalRedirect("/Home/Default") : RedirectToPage();
         }
+
+        #endregion
     }
 }

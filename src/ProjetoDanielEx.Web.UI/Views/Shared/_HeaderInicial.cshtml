@@ -1,0 +1,38 @@
+﻿<nav class="main-header navbar navbar-expand-md navbar-dark navbar-navy">
+    <div class="container">
+        <a href="@Url.Action("Default", "Home")" class="navbar-brand">
+            <img src="~/dist/img/logo_proj.jpeg" alt="C# Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">Aula Ensino Dot .Net</span>
+        </a>
+
+        <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+        </div>
+        <!-- Right navbar links -->
+        <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+
+            <!-- Notifications Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-user-circle fa-2x mr-1"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <span class="dropdown-header">Minha Conta</span>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" id="register" asp-area="Identity" asp-page="/Account/Register">
+                        <i class="fas fa-user-plus mr-1"></i>
+                        Registrar
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" id="login" asp-area="Identity" asp-page="/Account/Login">
+                        <i class="fas fa-user-alt"></i>
+                        Entrar
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
